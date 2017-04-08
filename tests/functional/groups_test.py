@@ -1,7 +1,6 @@
 import unittest
 import os
 import requests
-import json
 
 
 class GroupsTest(unittest.TestCase):
@@ -24,8 +23,9 @@ class GroupsTest(unittest.TestCase):
            "estimatedCloseDate": "2017-04-06 16:57:00",
            "comments": "string"
         }
-        body = json.dumps(request_data)
-        req = requests.post(self.api_url + '/groups', body)
+        req = requests.post(self.api_url + '/groups',
+                            headers={"Content-type": "application/json"},
+                            json=request_data)
         data = req.json()
 
         self.assertEqual(req.status_code, 201)
