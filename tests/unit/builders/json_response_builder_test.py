@@ -6,14 +6,24 @@ from api import app
 
 class JSONResponseBuilderTest(unittest.TestCase):
 
-    def test_build_json(self):
+    def test_build_json_with_success(self):
         data = ['my cool array']
         success = True
-        message = ['Awesome message']
         with app.test_request_context():
             r = JSONResponseBuilder.build_response(data,
-                                                   success, message)
+                                                   success)
         dictionary = json.loads(r.get_data().decode("utf-8"))
         self.assertEquals(dictionary['data'], data)
         self.assertEquals(dictionary['success'], success)
-        self.assertEquals(dictionary['messages'], message)
+        self.assertEquals(dictionary['messages'], [])
+
+    def test_build_json_without_success(self):
+        success = False
+        messages = ['Falhou']
+        with app.test_request_context():
+            r = JSONResponseBuilder.build_response(success=success,
+                                                   messages=messages)
+        dictionary = json.loads(r.get_data().decode("utf-8"))
+        self.assertEquals(dictionary['data'], [])
+        self.assertEquals(dictionary['success'], success)
+        self.assertEquals(dictionary['messages'], messages)
